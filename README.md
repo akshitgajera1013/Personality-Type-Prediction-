@@ -81,6 +81,7 @@ https://github.com/akshitgajera1013/Personality-Type-Prediction-.git
 2️⃣ Navigate to project folder:
 
 3️⃣ Install dependencies:
+pip freeze > requirements.txt
 
 The app will open in your browser automatically.
 
