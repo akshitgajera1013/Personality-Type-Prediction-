@@ -66,9 +66,9 @@ The model was trained using the following features:
 ## 📂 Project Structure
 Personality-Type-Prediction-/)
 ├── app.py
-├── model_1.pkl
-├── scaler.pkl
-├── label_encoder.pkl
+├── personality_model.pkl
+├── scalar.pkl
+├── encoder.pkl
 ├── requirements.txt
 └── README.md
 
