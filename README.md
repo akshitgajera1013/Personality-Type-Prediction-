@@ -64,6 +64,7 @@ The model was trained using the following features:
 - decision_speed  
 
 ## 📂 Project Structure
+
 Personality-Type-Prediction-/)
 ├── app.py
 ├── personality_model.pkl
