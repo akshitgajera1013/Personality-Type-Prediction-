@@ -6,45 +6,74 @@ import pickle
 # Page Config
 # --------------------------------------------------
 st.set_page_config(
-    page_title="Personality Type Prediction",
+    page_title="Personality Intelligence System",
     page_icon="🧠",
     layout="wide"
 )
 
 # --------------------------------------------------
-# Custom CSS (Modern Look)
+# Premium CSS
 # --------------------------------------------------
 st.markdown("""
 <style>
-.main {
-    background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+.stApp {
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    font-family: 'Segoe UI', sans-serif;
     color: white;
 }
+
+.header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.title {
+    font-size: 42px;
+    font-weight: 700;
+}
+
+.subtitle {
+    color: #94a3b8;
+    font-size: 18px;
+}
+
+.card {
+    background: rgba(255,255,255,0.05);
+    padding: 25px;
+    border-radius: 18px;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 10px 35px rgba(0,0,0,0.4);
+}
+
 .stButton>button {
     width: 100%;
-    height: 3em;
-    border-radius: 12px;
+    height: 55px;
     font-size: 18px;
     font-weight: bold;
+    border-radius: 14px;
+    background: linear-gradient(90deg,#22d3ee,#3b82f6);
+    color: black;
+    border: none;
 }
+
 .result-box {
-    padding: 25px;
-    border-radius: 12px;
+    margin-top: 30px;
+    padding: 35px;
+    border-radius: 18px;
     text-align: center;
-    font-size: 24px;
-    margin-top: 20px;
 }
+
 .footer {
     text-align: center;
-    margin-top: 40px;
+    margin-top: 50px;
     font-size: 14px;
-    color: #cccccc;
+    color: #94a3b8;
 }
 </style>
 """, unsafe_allow_html=True)
 
 # --------------------------------------------------
-# Load Model, Scaler, Encoder
+# Load Model
 # --------------------------------------------------
 with open("personality_model.pkl", "rb") as f:
     model = pickle.load(f)
@@ -56,16 +85,22 @@ with open("encoder.pkl", "rb") as f:
     label_encoder = pickle.load(f)
 
 # --------------------------------------------------
-# Header Section
+# Header
 # --------------------------------------------------
-st.markdown("<h1 style='text-align:center;'>🧠 Personality Type Prediction</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align:center;'>Logistic Regression Model | Accuracy: 99%</p>", unsafe_allow_html=True)
+st.markdown("""
+<div class="header">
+    <div class="title">🧠 Personality Intelligence System</div>
+    <div class="subtitle">Logistic Regression Model | Multi-Class Classification</div>
+</div>
+""", unsafe_allow_html=True)
+
 st.markdown("---")
 
 # --------------------------------------------------
 # Input Section
 # --------------------------------------------------
-st.subheader("Adjust Personality Traits")
+st.markdown('<div class="card">', unsafe_allow_html=True)
+st.subheader("Adjust Your Personality Traits (0 = Low, 10 = High)")
 
 col1, col2, col3 = st.columns(3)
 
@@ -98,13 +133,15 @@ with col3:
     online_social_usage = st.slider("Online Social Usage", 0, 10, 5)
     travel_desire = st.slider("Travel Desire", 0, 10, 5)
     gadget_usage = st.slider("Gadget Usage", 0, 10, 5)
-    work_style_collaborative = st.slider("Work Style Collaborative", 0, 10, 5)
+    work_style_collaborative = st.slider("Collaborative Work Style", 0, 10, 5)
     decision_speed = st.slider("Decision Speed", 0, 10, 5)
 
+st.markdown('</div>', unsafe_allow_html=True)
+
 # --------------------------------------------------
-# Prepare Features (Order MUST Match Training)
+# Prepare Features
 # --------------------------------------------------
-features = np.array([[
+features = np.array([[ 
     social_energy, alone_time_preference, talkativeness,
     deep_reflection, group_comfort, party_liking,
     listening_skill, empathy, organization,
@@ -117,11 +154,11 @@ features = np.array([[
 ]])
 
 # --------------------------------------------------
-# Prediction Section
+# Prediction
 # --------------------------------------------------
 st.markdown("---")
 
-if st.button("🔍 Predict Personality Type"):
+if st.button("🔍 Analyze Personality"):
 
     scaled_input = scaler.transform(features)
 
@@ -131,10 +168,26 @@ if st.button("🔍 Predict Personality Type"):
     probability = model.predict_proba(scaled_input)
     confidence = round(np.max(probability) * 100, 2)
 
+    personality = prediction_text[0]
+
+    # Add short description
+    personality_description = {
+        "Extrovert": "Energetic, social, and thrives in group settings.",
+        "Introvert": "Reflective, independent, and comfortable with solitude.",
+        "Ambivert": "Balanced personality with both introverted and extroverted traits."
+    }
+
+    description = personality_description.get(
+        personality,
+        "Unique personality pattern detected."
+    )
+
     st.markdown(f"""
-    <div class="result-box" style="background-color:#1e90ff;">
-        🎉 Predicted Personality Type: <b>{prediction_text[0]}</b><br><br>
-        Confidence Score: <b>{confidence}%</b>
+    <div class="result-box" style="background:#1f2937;">
+        <h2>🎯 Predicted Personality: {personality}</h2>
+        <p>{description}</p>
+        <br>
+        <strong>Confidence Level: {confidence}%</strong>
     </div>
     """, unsafe_allow_html=True)
 
@@ -143,6 +196,6 @@ if st.button("🔍 Predict Personality Type"):
 # --------------------------------------------------
 st.markdown("""
 <div class="footer">
-Built with ❤️ by Akshit Gajera | Machine Learning Portfolio Project
+Built with ❤️ by Akshit Gajera | Machine Learning Portfolio
 </div>
 """, unsafe_allow_html=True)
