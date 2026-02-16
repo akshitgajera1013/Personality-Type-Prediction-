@@ -1,6 +1,6 @@
 # Personality-Type-Prediction
 
-Application Link:https://personality-type-prediction-app.streamlit.app/
+Deployment URL :- https://personality-type-prediction-app.streamlit.app/
 
 # 🧠 Personality Type Prediction using Machine Learning
 This project predicts a person's personality type based on behavioral and lifestyle traits using a Machine Learning model.
