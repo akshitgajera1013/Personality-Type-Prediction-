@@ -1,6 +1,7 @@
 import streamlit as st
 import numpy as np
 import pickle
+import matplotlib.pyplot as plt
 
 # --------------------------------------------------
 # Page Config
@@ -43,6 +44,7 @@ st.markdown("""
     border-radius: 18px;
     backdrop-filter: blur(12px);
     box-shadow: 0 10px 35px rgba(0,0,0,0.4);
+    margin-bottom: 25px;
 }
 
 .stButton>button {
@@ -54,13 +56,6 @@ st.markdown("""
     background: linear-gradient(90deg,#22d3ee,#3b82f6);
     color: black;
     border: none;
-}
-
-.result-box {
-    margin-top: 30px;
-    padding: 35px;
-    border-radius: 18px;
-    text-align: center;
 }
 
 .footer {
@@ -90,7 +85,7 @@ with open("encoder.pkl", "rb") as f:
 st.markdown("""
 <div class="header">
     <div class="title">🧠 Personality Intelligence System</div>
-    <div class="subtitle">Logistic Regression Model | Multi-Class Classification</div>
+    <div class="subtitle">Logistic Regression | Multi-Class Personality Prediction</div>
 </div>
 """, unsafe_allow_html=True)
 
@@ -102,66 +97,40 @@ st.markdown("---")
 st.markdown('<div class="card">', unsafe_allow_html=True)
 st.subheader("Adjust Your Personality Traits (0 = Low, 10 = High)")
 
-col1, col2, col3 = st.columns(3)
+traits = {}
 
-with col1:
-    social_energy = st.slider("Social Energy", 0, 10, 5)
-    alone_time_preference = st.slider("Alone Time Preference", 0, 10, 5)
-    talkativeness = st.slider("Talkativeness", 0, 10, 5)
-    deep_reflection = st.slider("Deep Reflection", 0, 10, 5)
-    group_comfort = st.slider("Group Comfort", 0, 10, 5)
-    party_liking = st.slider("Party Liking", 0, 10, 5)
-    listening_skill = st.slider("Listening Skill", 0, 10, 5)
-    empathy = st.slider("Empathy", 0, 10, 5)
-    organization = st.slider("Organization", 0, 10, 5)
+trait_names = [
+    "Social Energy", "Alone Time Preference", "Talkativeness",
+    "Deep Reflection", "Group Comfort", "Party Liking",
+    "Listening Skill", "Empathy", "Organization",
+    "Leadership", "Risk Taking", "Public Speaking Comfort",
+    "Curiosity", "Routine Preference", "Excitement Seeking",
+    "Friendliness", "Planning", "Spontaneity",
+    "Adventurousness", "Reading Habit", "Sports Interest",
+    "Online Social Usage", "Travel Desire", "Gadget Usage",
+    "Collaborative Work Style", "Decision Speed"
+]
 
-with col2:
-    leadership = st.slider("Leadership", 0, 10, 5)
-    risk_taking = st.slider("Risk Taking", 0, 10, 5)
-    public_speaking_comfort = st.slider("Public Speaking Comfort", 0, 10, 5)
-    curiosity = st.slider("Curiosity", 0, 10, 5)
-    routine_preference = st.slider("Routine Preference", 0, 10, 5)
-    excitement_seeking = st.slider("Excitement Seeking", 0, 10, 5)
-    friendliness = st.slider("Friendliness", 0, 10, 5)
-    planning = st.slider("Planning", 0, 10, 5)
-    spontaneity = st.slider("Spontaneity", 0, 10, 5)
-
-with col3:
-    adventurousness = st.slider("Adventurousness", 0, 10, 5)
-    reading_habit = st.slider("Reading Habit", 0, 10, 5)
-    sports_interest = st.slider("Sports Interest", 0, 10, 5)
-    online_social_usage = st.slider("Online Social Usage", 0, 10, 5)
-    travel_desire = st.slider("Travel Desire", 0, 10, 5)
-    gadget_usage = st.slider("Gadget Usage", 0, 10, 5)
-    work_style_collaborative = st.slider("Collaborative Work Style", 0, 10, 5)
-    decision_speed = st.slider("Decision Speed", 0, 10, 5)
+cols = st.columns(3)
+for i, trait in enumerate(trait_names):
+    with cols[i % 3]:
+        traits[trait] = st.slider(trait, 0, 10, 5)
 
 st.markdown('</div>', unsafe_allow_html=True)
 
 # --------------------------------------------------
 # Prepare Features
 # --------------------------------------------------
-features = np.array([[ 
-    social_energy, alone_time_preference, talkativeness,
-    deep_reflection, group_comfort, party_liking,
-    listening_skill, empathy, organization,
-    leadership, risk_taking, public_speaking_comfort,
-    curiosity, routine_preference, excitement_seeking,
-    friendliness, planning, spontaneity,
-    adventurousness, reading_habit, sports_interest,
-    online_social_usage, travel_desire, gadget_usage,
-    work_style_collaborative, decision_speed
-]])
+features = np.array([list(traits.values())])
 
 # --------------------------------------------------
-# Prediction
+# Prediction Section
 # --------------------------------------------------
 st.markdown("---")
 
 if st.button("🔍 Analyze Personality"):
 
     scaled_input = scaler.transform(features)
-
     prediction_numeric = model.predict(scaled_input)
     prediction_text = label_encoder.inverse_transform(prediction_numeric)
 
@@ -170,11 +139,10 @@ if st.button("🔍 Analyze Personality"):
 
     personality = prediction_text[0]
 
-    # Add short description
     personality_description = {
-        "Extrovert": "Energetic, social, and thrives in group settings.",
-        "Introvert": "Reflective, independent, and comfortable with solitude.",
-        "Ambivert": "Balanced personality with both introverted and extroverted traits."
+        "Extrovert": "Energetic, social, expressive, and thrives in group environments.",
+        "Introvert": "Reflective, independent, thoughtful, and comfortable with solitude.",
+        "Ambivert": "Balanced personality combining both introverted and extroverted strengths."
     }
 
     description = personality_description.get(
@@ -182,14 +150,48 @@ if st.button("🔍 Analyze Personality"):
         "Unique personality pattern detected."
     )
 
+    # ----------------------------------------------
+    # Display Result
+    # ----------------------------------------------
     st.markdown(f"""
-    <div class="result-box" style="background:#1f2937;">
+    <div class="card">
         <h2>🎯 Predicted Personality: {personality}</h2>
         <p>{description}</p>
         <br>
-        <strong>Confidence Level: {confidence}%</strong>
+        <strong>Confidence Level:</strong>
     </div>
     """, unsafe_allow_html=True)
+
+    st.progress(confidence / 100)
+
+    st.write(f"Confidence Score: {confidence}%")
+
+    # ----------------------------------------------
+    # Radar Chart (Top 5 Dominant Traits)
+    # ----------------------------------------------
+    st.markdown("<br>")
+    st.subheader("📊 Personality Trait Profile")
+
+    # Select top 5 strongest traits
+    sorted_traits = sorted(traits.items(), key=lambda x: x[1], reverse=True)[:5]
+
+    labels = [t[0] for t in sorted_traits]
+    values = [t[1] for t in sorted_traits]
+
+    angles = np.linspace(0, 2 * np.pi, len(labels), endpoint=False).tolist()
+    values += values[:1]
+    angles += angles[:1]
+
+    fig, ax = plt.subplots(figsize=(5,5), subplot_kw=dict(polar=True))
+    ax.plot(angles, values)
+    ax.fill(angles, values, alpha=0.25)
+
+    ax.set_xticks(angles[:-1])
+    ax.set_xticklabels(labels)
+
+    ax.set_ylim(0, 10)
+
+    st.pyplot(fig)
 
 # --------------------------------------------------
 # Footer
