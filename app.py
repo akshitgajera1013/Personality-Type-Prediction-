@@ -22,7 +22,7 @@ import uuid
 # 1. PAGE CONFIGURATION & INITIALIZATION
 # =========================================================================================
 st.set_page_config(
-    page_title="PIP-SYS | Enterprise Cognitive Terminal",
+    page_title="PERSONALITY INTELLIGENCE PLATFORM",
     page_icon="🧠",
     layout="wide",
     initial_sidebar_state="expanded"
