@@ -6,6 +6,17 @@ Deployment URL :- https://personality-type-prediction-model.streamlit.app/
 This project predicts a person's personality type based on behavioral and lifestyle traits using a Machine Learning model.
 The model is built using **Logistic Regression** and deployed using **Streamlit** for an interactive user interface.
 
+#UI
+![Output](images/1.png)
+
+![Output](images/2.png)
+
+![Output](images/3.png)
+
+![Output](images/4.png)
+
+
+
 ## 🚀 Project Overview
 
 This ML model classifies personality types into 3 categories based on various psychological and behavioral features such as:
